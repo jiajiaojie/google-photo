@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+     android:interpolator="@android:anim/decelerate_interpolator"
+     android:ordering="together">
+
+    <objectAnimator
+        android:duration="100"
+        android:propertyName="translationX"
+        android:valueFrom="32dp"
+        android:valueTo="0"
+        android:valueType="floatType"/>
+
+</set>

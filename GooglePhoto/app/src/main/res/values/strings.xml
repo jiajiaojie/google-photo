@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GooglePhoto</string>
+
+    <string name="year_view">年视图</string>
+    <string name="month_view">月视图</string>
+    <string name="day_view">日视图</string>
+    <string name="other_view">其他视图</string>
+</resources>
