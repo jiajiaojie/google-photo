@@ -24,6 +24,9 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
 
     private List<PhotoItem> mSelectedPhotos;                // 选中的照片集合
 
+    private List<Float> mPercents;
+    private List<String> mTimelineTags;
+
     public GooglePhotoPresenter(GooglePhotoContract.View view) {
         mView = view;
         mSelectedPhotos = new ArrayList<>();
@@ -84,6 +87,22 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
             }
             mSelectedPhotos.clear();
         }
+    }
+
+    @Override
+    public void setTimelineData(List<Float> percents, List<String> timelineTags) {
+        this.mPercents = percents;
+        this.mTimelineTags = timelineTags;
+    }
+
+    @Override
+    public List<Float> getPercents() {
+        return mPercents;
+    }
+
+    @Override
+    public List<String> getTimelineTags() {
+        return mTimelineTags;
     }
 
     @Override

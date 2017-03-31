@@ -65,6 +65,26 @@ public interface GooglePhotoContract {
          */
         void cancleAllSelected();
 
+
+        /**
+         * 设置相册时间线数据
+         * @param percents
+         * @param timelineTags
+         */
+        void setTimelineData(List<Float> percents, List<String> timelineTags);
+
+        /**
+         * 获取时间线tag位置数据
+         * @return
+         */
+        List<Float> getPercents();
+
+        /**
+         * 获取时间线tag标题
+         * @return
+         */
+        List<String> getTimelineTags();
+
         /**
          * 清楚数据
          */

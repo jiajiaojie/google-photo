@@ -9,4 +9,5 @@
     <color name="glay_font">#97989A</color>
     <color name="dark_text">#1c3041</color>
     <color name="gray_background">#eeeff5</color>
+    <color name="gray_text">#858892</color>
 </resources>

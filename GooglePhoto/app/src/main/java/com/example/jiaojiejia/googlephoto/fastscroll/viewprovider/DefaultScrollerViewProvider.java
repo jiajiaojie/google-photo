@@ -15,6 +15,7 @@ public class DefaultScrollerViewProvider extends ScrollerViewProvider {
 
     protected View bubble;
     protected View handle;
+    protected View timeline;
 
     @Override
     public View provideHandleView(ViewGroup container) {
@@ -41,6 +42,12 @@ public class DefaultScrollerViewProvider extends ScrollerViewProvider {
     }
 
     @Override
+    public ViewGroup provideTimelineView(ViewGroup container) {
+        timeline = LayoutInflater.from(getContext()).inflate(R.layout.fastscroll_default_timeline, container, false);
+        return (ViewGroup) timeline;
+    }
+
+    @Override
     public int getBubbleOffset() {
         return (int) (getScroller().isVertical() ? ((float)handle.getHeight()/2f)-bubble.getHeight() / 2 : ((float)handle.getWidth()/2f)-bubble.getWidth());
     }
@@ -60,7 +67,7 @@ public class DefaultScrollerViewProvider extends ScrollerViewProvider {
 
     @Override
     protected ViewBehavior provideBubbleBehavior() {
-        return new DefaultBubbleBehavior(new VisibilityAnimationManager.Builder(bubble).withPivotX(1f).withPivotY(1f).build());
+        return new DefaultBubbleBehavior(new VisibilityAnimationManager.Builder(timeline).withPivotX(1f).withPivotY(1f).build());
     }
 
 

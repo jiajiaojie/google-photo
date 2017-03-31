@@ -5,6 +5,7 @@ import android.view.View;
 import com.example.jiaojiejia.googlephoto.bean.PhotoItem;
 import com.example.jiaojiejia.googlephoto.contract.GooglePhotoContract;
 import com.example.jiaojiejia.googlephoto.fastscroll.SectionTitleProvider;
+import com.example.jiaojiejia.googlephoto.listener.PhotoTimelineDataProvider;
 import com.example.jiaojiejia.googlephoto.sectionedrecyclerviewadapter.SimpleSectionedAdapter;
 import com.example.jiaojiejia.googlephoto.utils.Format;
 import com.example.jiaojiejia.googlephoto.viewholder.base.BasePhotoItemHolder;
@@ -19,13 +20,13 @@ import java.util.Map;
  * Created by jiaojie.jia on 2017/3/20.
  */
 
-public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends SimpleSectionedAdapter<T> implements SectionTitleProvider {
+public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends SimpleSectionedAdapter<T> implements SectionTitleProvider, PhotoTimelineDataProvider {
 
     private LinkedHashMap<String, List<PhotoItem>> mAllPhotos;       // key-日期（月或日), value-该日期下的所有照片
 
     protected List<String> mTitles;                             // 日期集合
     protected List<List<PhotoItem>> mSectionPhotos;      // 照片集合
-    private List<PhotoItem> items;                       // 把上面照片集合转成一维集合，方便取值
+    protected List<PhotoItem> items;                       // 把上面照片集合转成一维集合，方便取值
 
     protected View.OnLongClickListener longClickListener;
     protected View.OnClickListener clickListener;
@@ -77,6 +78,16 @@ public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends Sim
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
+    }
+
+    @Override
+    public List<Float> getPercents() {
+        return mPresenter.getPercents();
+    }
+
+    @Override
+    public List<String> getTitles() {
+        return mPresenter.getTimelineTags();
     }
 
     /** 单选 */

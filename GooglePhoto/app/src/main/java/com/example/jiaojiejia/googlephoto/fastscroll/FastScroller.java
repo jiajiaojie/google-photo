@@ -6,15 +6,25 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jiaojiejia.googlephoto.R;
 import com.example.jiaojiejia.googlephoto.fastscroll.viewprovider.DefaultScrollerViewProvider;
 import com.example.jiaojiejia.googlephoto.fastscroll.viewprovider.ScrollerViewProvider;
+import com.example.jiaojiejia.googlephoto.listener.PhotoTimelineDataProvider;
+import com.example.jiaojiejia.googlephoto.utils.UIUtils;
+
+import java.util.List;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
 /**
@@ -29,12 +39,14 @@ public class FastScroller extends LinearLayout {
     private View bubble;
     private View handle;
     private TextView bubbleTextView;
+    private ViewGroup timeline;
 
     private int bubbleOffset;
     private int handleColor;
     private int bubbleColor;
     private int bubbleTextAppearance;
     private int scrollerOrientation;
+    private PhotoTimelineDataProvider timelineProvider;
 
     //TODO the name should be fixed, also check if there is a better way of handling the visibility, because this is somewhat convoluted
     private int maxVisibility;
@@ -78,8 +90,60 @@ public class FastScroller extends LinearLayout {
         bubble = viewProvider.provideBubbleView(this);
         handle = viewProvider.provideHandleView(this);
         bubbleTextView = viewProvider.provideBubbleTextView();
-        addView(bubble);
+        timeline = viewProvider.provideTimelineView(this);
+        timeline.addView(bubble);
+        addView(timeline);
         addView(handle);
+    }
+
+    /**
+     * 初始化时间轴
+     */
+    public void initTimelineView() {
+        if(timelineProvider == null) return;
+        List<Float> percents = timelineProvider.getPercents();
+        List<String> titles = timelineProvider.getTitles();
+        int height = UIUtils.dip2px(20);
+        boolean forceAdd;
+        String year = null;
+        float lastPosition = 0;
+        TextView lastTag = null;
+        for(int i = 0; i < percents.size(); i++) {
+            TextView tvTime = getTimelineTag();
+            String title = titles.get(i);
+            if(!TextUtils.isEmpty(year) && title.startsWith(year)) {
+                forceAdd = false;
+                tvTime.setText(title.substring(5));
+            } else {
+                forceAdd = true;
+                tvTime.setText(title.substring(0, 5));
+            }
+            year = title.substring(0, 5);
+
+            float y = getHeight() * percents.get(i);
+            if(y >= lastPosition || forceAdd) {
+                timeline.addView(tvTime);
+                tvTime.setY(y);
+                lastPosition = y + height;
+                if(forceAdd && lastTag != null) {
+                    timeline.removeView(lastTag);
+                }
+                lastTag = tvTime;
+            }
+        }
+    }
+
+    private TextView getTimelineTag() {
+        TextView tvTime = new TextView(getContext());
+        tvTime.setTextSize(12);
+        tvTime.setTextColor(getResources().getColor(R.color.gray_text));
+        tvTime.setBackgroundResource(R.drawable.fastscroll_default_timeline_tag);
+        int padding = (int) getContext().getResources().getDimension(R.dimen.dimen_5dp);
+        tvTime.setPadding(padding * 2, padding / 2, padding * 2, padding / 2);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        lp.gravity = Gravity.RIGHT;
+        tvTime.setLayoutParams(lp);
+        return tvTime;
     }
 
     /**
@@ -90,7 +154,12 @@ public class FastScroller extends LinearLayout {
      */
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
-        if(recyclerView.getAdapter() instanceof SectionTitleProvider) titleProvider = (SectionTitleProvider) recyclerView.getAdapter();
+        if(recyclerView.getAdapter() instanceof SectionTitleProvider) {
+            titleProvider = (SectionTitleProvider) recyclerView.getAdapter();
+        }
+        if(recyclerView.getAdapter() instanceof PhotoTimelineDataProvider) {
+            timelineProvider = (PhotoTimelineDataProvider) recyclerView.getAdapter();
+        }
         recyclerView.addOnScrollListener(scrollListener);
         invalidateVisibility();
         recyclerView.setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
@@ -251,7 +320,13 @@ public class FastScroller extends LinearLayout {
         int itemCount = recyclerView.getAdapter().getItemCount();
         int targetPos = (int) Utils.getValueInRange(0, itemCount - 1, (int) (relativePos * (float) itemCount));
         recyclerView.scrollToPosition(targetPos);
-        if(titleProvider!=null && bubbleTextView!=null) bubbleTextView.setText(titleProvider.getSectionTitle(targetPos));
+        if(titleProvider!=null && bubbleTextView!=null) {
+            String title = titleProvider.getSectionTitle(targetPos);
+            if(!TextUtils.isEmpty(title)) {
+                bubbleTextView.setText(title);
+            }
+            UIUtils.updateVisibility(bubbleTextView, TextUtils.isEmpty(title) ? View.INVISIBLE : View.VISIBLE);
+        }
     }
 
     void setScrollerPosition(float relativePos) {

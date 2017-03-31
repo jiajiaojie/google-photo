@@ -49,6 +49,8 @@ public abstract class ScrollerViewProvider {
      */
     public abstract TextView provideBubbleTextView();
 
+    public abstract ViewGroup provideTimelineView(ViewGroup container);
+
     /**
      * To offset the position of the bubble relative to the handle. E.g. in {@link DefaultScrollerViewProvider}
      * the sharp corner of the bubble is aligned with the center of the handle.

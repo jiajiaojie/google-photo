@@ -3,6 +3,7 @@ package com.example.jiaojiejia.googlephoto.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.example.jiaojiejia.googlephoto.application.GooglePhotoApplication;
@@ -41,6 +42,18 @@ public class UIUtils {
     public static int sp2px(float spValue) {
         final float fontScale = UIUtils.getContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
+    }
+
+    /**
+     * 设置view显示or隐藏
+     *
+     * @param v
+     * @param visibility
+     */
+    public static void updateVisibility(View v, int visibility) {
+        if (v != null && v.getVisibility() != visibility) {
+            v.setVisibility(visibility);
+        }
     }
 
     /**

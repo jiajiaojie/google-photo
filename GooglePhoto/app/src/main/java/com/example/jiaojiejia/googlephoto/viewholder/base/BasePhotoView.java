@@ -162,6 +162,12 @@ public abstract class BasePhotoView extends BaseHolder<LinkedHashMap<String, Lis
     public void refreshView() {
         if (Format.isEmpty(data)) return;
         mAdapter.setAllPhotos(data);
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fastScroller.initTimelineView();
+            }
+        }, 1000);
     }
 
     /**
