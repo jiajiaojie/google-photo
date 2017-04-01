@@ -3,6 +3,7 @@ package com.example.jiaojiejia.googlephoto.fastscroll.viewprovider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jiaojiejia.googlephoto.R;
@@ -23,7 +24,8 @@ public class DefaultScrollerViewProvider extends ScrollerViewProvider {
 
         int handleWidth = getContext().getResources().getDimensionPixelSize(getScroller().isVertical() ? R.dimen.fastscroll__handle_clickable_width : R.dimen.fastscroll__handle_height);
         int handleHeight = getContext().getResources().getDimensionPixelSize(getScroller().isVertical() ? R.dimen.fastscroll__handle_height : R.dimen.fastscroll__handle_clickable_width);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(handleWidth, handleHeight);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(handleWidth, handleHeight);
+        params.leftMargin = getContext().getResources().getDimensionPixelSize(R.dimen.dimen_20dp);
         handle.setBackgroundResource(R.drawable.photo_handle);
         handle.setLayoutParams(params);
 
