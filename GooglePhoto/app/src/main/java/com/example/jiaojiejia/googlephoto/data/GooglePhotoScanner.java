@@ -104,7 +104,7 @@ public class GooglePhotoScanner {
             PhotoItem photoItem = new PhotoItem(id, path, width, height, size, latitude, longitude, 0, orientation, takendate, modified);
 
             // 查询缩略图非常消耗性能
-            photoItem.setThumbnail(getThumbnail(id));
+//            photoItem.setThumbnail(getThumbnail(id));
 
             //根据父路径名将图片放入到mGruopMap中
             if (!mGruopMap.containsKey(parentName)) {

@@ -47,6 +47,8 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
     private DayView mDayView;           // 日视图
     private OtherView mOtherView;  // 其他文件夹视图
 
+    private MenuItem mDeleteMenuItem;
+
     private PhotoFoldersAdapter mFoldersAdapter;
     private BottomSheetBehavior mBottomSheetBehavior;
 
@@ -166,6 +168,11 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
     }
 
     @Override
+    public void setDeleteButtonVisble(boolean visble) {
+        mDeleteMenuItem.setVisible(visble);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter.clear();
@@ -190,12 +197,16 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_view_menu, menu);
+        mDeleteMenuItem = menu.findItem(R.id.delete);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.delete:
+                mPresenter.deleteSelectedPhotos();
+                break;
             case R.id.year_view:
                 switchView(ViewType.YEAR);
                 break;

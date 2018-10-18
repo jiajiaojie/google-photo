@@ -11,6 +11,7 @@ import com.example.jiaojiejia.googlephoto.utils.Format;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jiaojie.jia on 2017/3/15.
@@ -21,6 +22,8 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
     private GooglePhotoActivity.ViewType mViewType;         // 当前视图类型
 
     private GooglePhotoContract.View mView;                 // view
+
+    private LinkedHashMap<String, List<PhotoItem>> mAllPhotos;
 
     private List<PhotoItem> mSelectedPhotos;                // 选中的照片集合
 
@@ -44,21 +47,22 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
 
     @Override
     public void loadPhotos() {
-        if(!Format.isEmpty(getPhotoData()) && !Format.isEmpty(GooglePhotoScanner.getImageFloders())) {
-            mView.fullData(getPhotoData());
+        if(!Format.isEmpty(mAllPhotos) && !Format.isEmpty(GooglePhotoScanner.getImageFloders())) {
+            mView.fullData(mAllPhotos);
             mView.fullFolders(GooglePhotoScanner.getImageFloders());
         } else {
-            new AsyncTask<Void, Void, Void>() {
+            new AsyncTask<Void, Void, LinkedHashMap<String, List<PhotoItem>>>() {
 
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected LinkedHashMap<String, List<PhotoItem>> doInBackground(Void... params) {
                     GooglePhotoScanner.startScan();
-                    return null;
+                    return getPhotoData();
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
-                    mView.fullData(getPhotoData());
+                protected void onPostExecute(LinkedHashMap<String, List<PhotoItem>> photos) {
+                    mAllPhotos = photos;
+                    mView.fullData(photos);
                     mView.fullFolders(GooglePhotoScanner.getImageFloders());
                 }
             }.execute();
@@ -72,11 +76,25 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
         } else if(!photoItem.isSelected() && mSelectedPhotos.contains(photoItem)){
             mSelectedPhotos.remove(photoItem);
         }
+        mView.setDeleteButtonVisble(!isSelectedEmpty());
     }
 
     @Override
     public boolean isSelectedEmpty() {
         return Format.isEmpty(mSelectedPhotos);
+    }
+
+    @Override
+    public void deleteSelectedPhotos() {
+        for (PhotoItem photoItem: mSelectedPhotos) {
+            for (Map.Entry<String, List<PhotoItem>> entry : mAllPhotos.entrySet()) {
+                List<PhotoItem> photoItems = entry.getValue();
+                if (photoItems.contains(photoItem)) {
+                    photoItems.remove(photoItem);
+                }
+            }
+        }
+        mView.fullData(mAllPhotos);
     }
 
     @Override

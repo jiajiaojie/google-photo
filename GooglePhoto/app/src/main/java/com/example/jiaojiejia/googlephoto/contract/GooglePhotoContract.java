@@ -28,6 +28,11 @@ public interface GooglePhotoContract {
          */
         void fullFolders(List<ImageFolder> folders);
 
+        /**
+         * 没有选择照片的时候隐藏删除按钮
+         */
+        void setDeleteButtonVisble(boolean visble);
+
     }
 
     interface Presenter {
@@ -59,6 +64,11 @@ public interface GooglePhotoContract {
          * @return
          */
         boolean isSelectedEmpty();
+
+        /**
+         * 删除选中的照片
+         */
+        void deleteSelectedPhotos();
 
         /**
          * 清楚所有选中的照片
