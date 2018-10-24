@@ -9,6 +9,7 @@ import android.view.View;
 import com.example.jiaojiejia.googlephoto.R;
 import com.example.jiaojiejia.googlephoto.adapter.OtherViewAdapter;
 import com.example.jiaojiejia.googlephoto.bean.ImageFolder;
+import com.example.jiaojiejia.googlephoto.bean.PhotoItem;
 import com.example.jiaojiejia.googlephoto.contract.GooglePhotoContract;
 import com.example.jiaojiejia.googlephoto.fastscroll.FastScroller;
 import com.example.jiaojiejia.googlephoto.listener.DragSelectTouchListener;
@@ -93,6 +94,15 @@ public class OtherView extends BaseHolder<ImageFolder> {
     public void refreshView() {
         if (Format.isEmpty(data.getList())) return;
         mAdapter.setData(data.getList());
+    }
+
+    /**
+     * 删除照片
+     */
+    public void deletePhoto(PhotoItem photoItem) {
+        int viewPosition = mAdapter.getPhotoPosition(photoItem);
+        mAdapter.removePhoto(photoItem);
+        mAdapter.notifyItemRemoved(viewPosition);
     }
 
     /**

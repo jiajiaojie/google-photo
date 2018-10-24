@@ -173,6 +173,22 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
     }
 
     @Override
+    public void deletePhotoView(PhotoItem photoItem) {
+        switch (mPresenter.getViewType()) {
+            case MONTH:
+                mMonthView.deletePhoto(photoItem);
+                break;
+            case DAY:
+                mDayView.deletePhoto(photoItem);
+                break;
+            case OTHER:
+                mOtherView.deletePhoto(photoItem);
+                break;
+        }
+        mDeleteMenuItem.setVisible(false);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter.clear();
@@ -240,13 +256,11 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
                 || SwitchViewAnimHelper.getInstance().isAnimRunning()) {
             return;
         }
-        boolean load = true;
         mContainer.removeAllViews();
         switch (viewType) {
             case YEAR:
                 mContainer.addView(mYearView.getRootView());
                 SwitchViewAnimHelper.getInstance().toSmallView(mYearView.getRootView());
-                load = mYearView.isEmpty();
                 break;
             case MONTH:
                 mContainer.addView(mMonthView.getRootView());
@@ -256,17 +270,13 @@ public class GooglePhotoActivity extends AppCompatActivity implements GooglePhot
                 } else if(mPresenter.getViewType() == ViewType.YEAR) {
                     SwitchViewAnimHelper.getInstance().toLargeView(mMonthView.getRootView());
                 }
-                load = mMonthView.isEmpty();
                 break;
             case DAY:
                 mContainer.addView(mDayView.getRootView());
                 SwitchViewAnimHelper.getInstance().toLargeView(mDayView.getRootView());
-                load = mDayView.isEmpty();
                 break;
         }
         mPresenter.setViewType(viewType);
-        if(load) {
-            mPresenter.loadPhotos();
-        }
+        mPresenter.loadPhotos();
     }
 }

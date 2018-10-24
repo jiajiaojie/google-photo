@@ -33,6 +33,12 @@ public interface GooglePhotoContract {
          */
         void setDeleteButtonVisble(boolean visble);
 
+        /**
+         * 删除照片
+         * @param photoItem
+         */
+        void deletePhotoView(PhotoItem photoItem);
+
     }
 
     interface Presenter {

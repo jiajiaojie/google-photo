@@ -22,11 +22,11 @@ import java.util.Map;
 
 public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends SimpleSectionedAdapter<T> implements SectionTitleProvider, PhotoTimelineDataProvider {
 
-    private LinkedHashMap<String, List<PhotoItem>> mAllPhotos;       // key-日期（月或日), value-该日期下的所有照片
+    private LinkedHashMap<String, List<PhotoItem>> mAllPhotos;      // key-日期（月或日), value-该日期下的所有照片
 
-    protected List<String> mTitles;                             // 日期集合
-    protected List<List<PhotoItem>> mSectionPhotos;      // 照片集合
-    protected List<PhotoItem> items;                       // 把上面照片集合转成一维集合，方便取值
+    protected List<String> mTitles;                                 // 日期集合
+    protected List<List<PhotoItem>> mSectionPhotos;                 // 照片集合
+    protected List<PhotoItem> items;                                // 把上面照片集合转成一维集合，方便取值
 
     protected View.OnLongClickListener longClickListener;
     protected View.OnClickListener clickListener;
@@ -47,9 +47,7 @@ public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends Sim
             mSectionPhotos.add(entry.getValue());
         }
         for(List<PhotoItem> photoSection: mSectionPhotos) {
-            for(PhotoItem photoItem: photoSection) {
-                items.add(photoItem);
-            }
+            items.addAll(photoSection);
         }
         initOther();
         notifyDataSetChanged();
@@ -126,6 +124,19 @@ public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends Sim
         return dataPosition < 0 ? 0 : dataPosition;
     }
 
+    /** 由数据获取列表位置 */
+    public int getViewPositionByData(PhotoItem photoItem) {
+        int dataPosition = 0;
+        for (Map.Entry<String, List<PhotoItem>> entry: mAllPhotos.entrySet()) {
+            if (entry.getValue().contains(photoItem)) {
+                dataPosition += entry.getValue().indexOf(photoItem);
+                break;
+            }
+            dataPosition += entry.getValue().size();
+        }
+        return dataPosition + getSection(photoItem) + 1;
+    }
+
     /** 根据列表物理位置返回此位置所属Section */
     private int getSection(int position) {
         int section = 0;
@@ -133,6 +144,18 @@ public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends Sim
         for(List<PhotoItem> photoSection: mSectionPhotos) {
             sum += photoSection.size() + 1;
             if(position < sum) {
+                break;
+            }
+            section++;
+        }
+        return section;
+    }
+
+    /** 根据照片返回此位置所属Section */
+    private int getSection(PhotoItem photoItem) {
+        int section = 0;
+        for(Map.Entry<String, List<PhotoItem>> entry: mAllPhotos.entrySet()) {
+            if(entry.getValue().contains(photoItem)) {
                 break;
             }
             section++;
@@ -165,6 +188,19 @@ public abstract class BaseViewAdapter<T extends BasePhotoItemHolder> extends Sim
     @Override
     public String getSectionTitle(int position) {
         return getSectionHeaderTitle(getSection(position));
+    }
+
+    /**
+     * 删除照片数据
+     */
+    public void removePhoto(PhotoItem photoItem) {
+        for(List<PhotoItem> photoItems : mSectionPhotos) {
+            if (photoItems.contains(photoItem)){
+                photoItems.remove(photoItem);
+                break;
+            }
+        }
+        items.remove(photoItem);
     }
 
 }

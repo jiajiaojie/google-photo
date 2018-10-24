@@ -92,6 +92,20 @@ public class OtherViewAdapter extends RecyclerView.Adapter implements SectionTit
         return mPhotoItems.get(i);
     }
 
+    /**
+     * 获取照片位置
+     */
+    public int getPhotoPosition(PhotoItem photoItem) {
+        return mPhotoItems.isEmpty() ? -1 : mPhotoItems.indexOf(photoItem);
+    }
+
+    /**
+     * 删除照片
+     */
+    public void removePhoto(PhotoItem photoItem) {
+        mPhotoItems.remove(photoItem);
+    }
+
     @Override
     public String getSectionTitle(int position) {
         return null;

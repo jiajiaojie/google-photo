@@ -86,15 +86,21 @@ public class GooglePhotoPresenter implements GooglePhotoContract.Presenter {
 
     @Override
     public void deleteSelectedPhotos() {
-        for (PhotoItem photoItem: mSelectedPhotos) {
-            for (Map.Entry<String, List<PhotoItem>> entry : mAllPhotos.entrySet()) {
-                List<PhotoItem> photoItems = entry.getValue();
-                if (photoItems.contains(photoItem)) {
-                    photoItems.remove(photoItem);
-                }
+        if (!mSelectedPhotos.isEmpty()) {
+            for (PhotoItem photoItem : mSelectedPhotos) {
+                if (mViewType == GooglePhotoActivity.ViewType.OTHER) {
+                    mView.deletePhotoView(photoItem);
+                } else
+                    for (Map.Entry<String, List<PhotoItem>> entry : mAllPhotos.entrySet()) {
+                        List<PhotoItem> photoItems = entry.getValue();
+                        if (photoItems.contains(photoItem)) {
+                            mView.deletePhotoView(photoItem);
+                            photoItems.remove(photoItem);
+                        }
+                    }
             }
+            mSelectedPhotos.clear();
         }
-        mView.fullData(mAllPhotos);
     }
 
     @Override

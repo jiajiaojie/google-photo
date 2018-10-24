@@ -177,4 +177,13 @@ public abstract class BasePhotoView extends BaseHolder<LinkedHashMap<String, Lis
         mAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * 删除照片
+     */
+    public void deletePhoto(PhotoItem photoItem) {
+        int viewPosition = mAdapter.getViewPositionByData(photoItem);
+        mAdapter.removePhoto(photoItem);
+        mAdapter.notifyItemRemoved(viewPosition);
+    }
+
 }
